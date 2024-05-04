@@ -1,3 +1,113 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "lib": [
+      "es2020",
+      "es2020.bigint",
+      "es2020.date",
+      "es2020.number",
+      "es2020.promise",
+      "es2020.string",
+      "es2020.symbol.wellknown",
+      "es2021.promise",
+      "es2021.string",
+      "es2021.weakref",
+      "es2022.array",
+      "es2022.object",
+      "es2022.string"
+    ],
+    "target": "ES2020",
+    "baseUrl": ".",
+    /* Base directory to resolve non-absolute module names. */
+    "paths": {
+      "*": [
+        "src/*"
+      ],
+      "tests": [
+        "__tests__/*"
+      ],
+      "assets": [
+        "assets/*"
+      ],
+      "ios": [
+        "ios/*"
+      ],
+      "android": [
+        "android/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@components": [
+        "src/components/index"
+      ],
+      "@constants/*": [
+        "src/constants/*"
+      ],
+      "@constants": [
+        "src/constants/index"
+      ],
+      "@context/*": [
+        "src/context/*"
+      ],
+      "@context": [
+        "src/context/index"
+      ],
+      "@hoc/*": [
+        "src/hoc/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@libs/*": [
+        "src/libs/*"
+      ],
+      "@modules/*": [
+        "src/modules/*"
+      ],
+      "@queries/*": [
+        "src/queries/*"
+      ],
+      "@queries": [
+        "src/queries/index"
+      ],
+      "@redux/*": [
+        "src/redux/*"
+      ],
+      "@screens/*": [
+        "src/screens/*"
+      ],
+      "@screens": [
+        "src/screens/index"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@services": [
+        "src/services/index"
+      ],
+      "@styles": [
+        "src/styles/index"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@utils": [
+        "src/utils/index"
+      ]
+    },
+    "allowSyntheticDefaultImports": true,
+    /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
+    "esModuleInterop": true,
+    /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "noEmit": true
+  },
+  "exclude": [
+    "./node_modules/**",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
+  ]
 }
