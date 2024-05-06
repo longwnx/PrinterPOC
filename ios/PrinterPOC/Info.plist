@@ -18,6 +18,10 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+	<string>GreenPOS cần quyền truy cập vào bluetooth để có thể tìm kiếm các thiết bị máy in</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>GreenPOS cần quyền truy cập vào bluetooth để có thể tìm kiếm các thiết bị máy in</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>

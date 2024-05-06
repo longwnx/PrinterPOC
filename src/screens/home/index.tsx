@@ -2,7 +2,6 @@ import {Picker} from '@react-native-picker/picker';
 import React, {createContext, useCallback, useEffect, useRef} from 'react';
 import {
   Dimensions,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -10,19 +9,18 @@ import {
   View,
 } from 'react-native';
 import {
+  BLEPrinter,
   ColumnAlignment,
   COMMANDS,
-  NetPrinter,
 } from 'react-native-thermal-receipt-printer-image-qr';
-
 import {navigate} from '../../../App'; // import AntIcon from 'react-native-vector-icons/AntDesign';
 // import QRCode from 'react-native-qrcode-svg';
-import {Buffer} from 'buffer';
 import {Loading} from '../../components';
 // @ts-ignore
 import EscPosEncoder from 'esc-pos-encoder';
 import {useConnectPrinter, useGetListDevices} from '../../hooks';
 import HomeContextProvider from './HomeContextProvider';
+import ImgToBase64 from 'react-native-image-base64';
 
 const deviceWidth = Dimensions.get('window').width;
 
@@ -61,9 +59,9 @@ const HomeScreen = ({route}: any) => {
   }, [route?.params?.printer, selectedNetPrinter, setSelectedNetPrinter]);
 
   useEffect(() => {
-    setLoading(true);
-    getListDevices().then();
-  }, [getListDevices, selectedValue, setLoading]);
+    // setLoading(true);
+    getListDevices();
+  }, [getListDevices]);
 
   const handleConnectSelectedPrinter = useCallback(async () => {
     setLoading(true);
@@ -72,129 +70,103 @@ const HomeScreen = ({route}: any) => {
 
   const handlePrint = async () => {
     try {
-      const Printer = printerList[selectedValue];
-      Printer.printText('<C>sample text</C>', {
+      // const Printer = printerList[selectedValue];
+      BLEPrinter.printText('<C>sample text</C>', {
         cut: false,
       });
-      Printer.printImage(
-        'https://sportshub.cbsistatic.com/i/2021/04/09/9df74632-fde2-421e-bc6f-d4bf631bf8e5/one-piece-trafalgar-law-wano-anime-1246430.jpg',
+      BLEPrinter.printImage(
+        'https://media-cdn.tripadvisor.com/media/photo-m/1280/1b/3a/bd/b5/the-food-bill.jpg',
+        {
+          imageWidth: 590,
+        },
       );
-      Printer.printBill('<C>sample text</C>');
+      BLEPrinter.printBill('<C>sample text</C>', {beep: false});
     } catch (err) {
       console.warn(err);
     }
   };
 
   const handlePrintBill = async () => {
-    let address = '2700 S123 Grand Ave, Los Angeles, CA 90007223, USA.';
+    let address = '13 Phạm Hùng, nam từ Liêm';
     const BOLD_ON = COMMANDS.TEXT_FORMAT.TXT_BOLD_ON;
     const BOLD_OFF = COMMANDS.TEXT_FORMAT.TXT_BOLD_OFF;
     const CENTER = COMMANDS.TEXT_FORMAT.TXT_ALIGN_CT;
     const OFF_CENTER = COMMANDS.TEXT_FORMAT.TXT_ALIGN_LT;
     try {
-      const getDataURL = () => {
-        (QrRef as any).toDataURL(callback);
-      };
-      const callback = async (dataURL: string) => {
-        let qrProcessed = dataURL.replace(/(\r\n|\n|\r)/gm, '');
-        // Can print android and ios with the same type or with encoder for android
-        if (Platform.OS === 'android' || Platform.OS === 'ios') {
-          const Printer: typeof NetPrinter = printerList[selectedValue];
-          Printer.printImage(
-            'https://sportshub.cbsistatic.com/i/2021/04/09/9df74632-fde2-421e-bc6f-d4bf631bf8e5/one-piece-trafalgar-law-wano-anime-1246430.jpg',
-            {
-              imageWidth: 300,
-              imageHeight: 300,
-            },
-          );
-          Printer.printText(`${CENTER}${BOLD_ON} BILLING ${BOLD_OFF}\n`);
-          Printer.printText(`${CENTER}${address}${OFF_CENTER}`);
-          Printer.printText('090 3399 031 555\n');
-          Printer.printText('Date : 15- 09 - 2021 /15 : 29 : 57 / Admin');
-          Printer.printText('Product : Total - 4 / No. (1,2,3,4)\n');
-          Printer.printText(
-            `${CENTER}${COMMANDS.HORIZONTAL_LINE.HR_80MM}${CENTER}`,
-          );
-          let orderList = [
-            ['1. Skirt Palas Labuh Muslimah Fashion', 'x2', '500$'],
-            ['2. BLOUSE ROPOL VIRAL MUSLIMAH FASHION', 'x4222', '500$'],
-            [
-              '3. Women Crew Neck Button Down Ruffle Collar Loose Blouse',
-              'x1',
-              '30000000000000$',
-            ],
-            ['4. Retro Buttons Up Full Sleeve Loose', 'x10', '200$'],
-            ['5. Retro Buttons Up', 'x10', '200$'],
-          ];
-          let columnAlignment = [
-            ColumnAlignment.LEFT,
-            ColumnAlignment.CENTER,
-            ColumnAlignment.RIGHT,
-          ];
-          let columnWidth = [46 - (7 + 12), 7, 12];
-          const header = ['Product list', 'Qty', 'Price'];
-          Printer.printColumnsText(header, columnWidth, columnAlignment, [
-            `${BOLD_ON}`,
-            '',
-            '',
-          ]);
-          Printer.printText(
-            `${CENTER}${COMMANDS.HORIZONTAL_LINE.HR3_80MM}${CENTER}`,
-          );
-          for (let i in orderList) {
-            Printer.printColumnsText(
-              orderList[i],
-              columnWidth,
-              columnAlignment,
-              [`${BOLD_OFF}`, '', ''],
-            );
-          }
-          Printer.printText('\n');
-          Printer.printImageBase64(qrProcessed, {
-            imageWidth: 50,
-            imageHeight: 50,
-          });
-          Printer.printBill(`${CENTER}Thank you\n`, {beep: false});
-        } else {
-          // optional for android
-          // android
-          const Printer = printerList[selectedValue];
-          const encoder = new EscPosEncoder();
-          let _encoder = encoder
-            .initialize()
-            .align('center')
-            .line('BILLING')
-            .qrcode('https://nielsleenheer.com')
-            .encode();
-          let base64String = Buffer.from(_encoder).toString('base64');
-          Printer.printRaw(base64String);
-        }
-      };
-      getDataURL();
+      BLEPrinter.printText(`${CENTER}${BOLD_ON} BILLING ${BOLD_OFF}\n`);
+      BLEPrinter.printText(`${CENTER}${address}${OFF_CENTER}`);
+      BLEPrinter.printText('090 3399 031 555\n');
+      BLEPrinter.printText('Date : 15- 09 - 2021 /15 : 29 : 57 / Admin');
+      BLEPrinter.printText('Product : Total - 4 / No. (1,2,3,4)\n');
+      BLEPrinter.printText(
+        `${CENTER}${COMMANDS.HORIZONTAL_LINE.HR_80MM}${CENTER}`,
+      );
+      let orderList = [
+        ['1. Skirt Palas Labuh Muslimah Fashion', 'x2', '500$'],
+        ['2. BLOUSE ROPOL VIRAL MUSLIMAH FASHION', 'x4222', '500$'],
+        [
+          '3. Women Crew Neck Button Down Ruffle Collar Loose Blouse',
+          'x1',
+          '30000000000000$',
+        ],
+        ['4. Retro Buttons Up Full Sleeve Loose', 'x10', '200$'],
+        ['5. Retro Buttons Up', 'x10', '200$'],
+      ];
+      let columnAlignment = [
+        ColumnAlignment.LEFT,
+        ColumnAlignment.CENTER,
+        ColumnAlignment.RIGHT,
+      ];
+      let columnWidth = [46 - (7 + 12), 7, 12];
+      const header = ['Product list', 'Qty', 'Price'];
+      BLEPrinter.printColumnsText(header, columnWidth, columnAlignment, [
+        `${BOLD_ON}`,
+        '',
+        '',
+      ]);
+      BLEPrinter.printText(
+        `${CENTER}${COMMANDS.HORIZONTAL_LINE.HR3_80MM}${CENTER}`,
+      );
+      for (let i in orderList) {
+        BLEPrinter.printColumnsText(
+          orderList[i],
+          columnWidth,
+          columnAlignment,
+          [`${BOLD_OFF}`, '', ''],
+        );
+      }
+      BLEPrinter.printText('\n');
+
+      BLEPrinter.printBill(`${CENTER}Thank you\n`, {beep: false});
     } catch (err) {
       console.warn(err);
     }
   };
 
-  const handlePrintBillWithImage = async () => {
-    const Printer: typeof NetPrinter = printerList[selectedValue];
-    Printer.printImage(
+  const printBuild = useCallback(async () => {
+    let address = '2700 S123 Grand Ave, Los Angeles, CA 90007223, USA.';
+    const BOLD_ON = COMMANDS.TEXT_FORMAT.TXT_BOLD_ON;
+    const BOLD_OFF = COMMANDS.TEXT_FORMAT.TXT_BOLD_OFF;
+    const CENTER = COMMANDS.TEXT_FORMAT.TXT_ALIGN_CT;
+    const OFF_CENTER = COMMANDS.TEXT_FORMAT.TXT_ALIGN_LT;
+    const data = await ImgToBase64.getBase64String(
       'https://media-cdn.tripadvisor.com/media/photo-m/1280/1b/3a/bd/b5/the-food-bill.jpg',
-      {
-        imageWidth: 575,
-        // imageHeight: 1000,
-        // paddingX: 100
-      },
     );
-    Printer.printBill('', {beep: false});
-  };
+    console.log('ImgToBase64', data);
+    try {
+      await BLEPrinter.printImageBase64(data, {
+        imageWidth: 589,
+      });
+    } catch (error) {
+      console.log('error', error);
+    }
+  }, []);
 
-  const handleChangePrinterType = async (type: keyof typeof printerList) => {
-    setSelectedValue(prev => {
-      printerList[prev].closeConn();
-      return type;
+  const handlePrintBillWithImage = async () => {
+    BLEPrinter.printImage(require('assets/Order.png'), {
+      imageWidth: 575,
     });
-    setSelectedPrinter({});
+    // BLEPrinter.printBill('', {beep: false});
   };
 
   const findPrinter = () => {
@@ -261,7 +233,8 @@ const HomeScreen = ({route}: any) => {
         <Picker
           selectedValue={String(selectedValue)}
           mode="dropdown"
-          onValueChange={handleChangePrinterType}>
+          // onValueChange={handleChangePrinterType}
+        >
           {Object.keys(printerList).map((item, index) => (
             <Picker.Item
               label={item.toUpperCase()}
@@ -314,6 +287,14 @@ const HomeScreen = ({route}: any) => {
             onPress={handlePrintBillWithImage}>
             {/*<AntIcon name={'profile'} color={'white'} size={18} />*/}
             <Text style={styles.text}>Print bill With Image</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.button, {backgroundColor: 'blue'}]}
+            onPress={printBuild}>
+            {/*<AntIcon name={'profile'} color={'white'} size={18} />*/}
+            <Text style={styles.text}>In thur</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.qr}>

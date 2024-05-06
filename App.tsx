@@ -1,9 +1,9 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {createRef} from 'react';
-import HomeScreen from './src/screens/home';
-import FindPrinter from './src/components/FindPrinter.tsx';
-import SunmiScreen from './src/screens/sunmi-v2';
+import SunmiScreen from 'screens/sunmi-v2';
+import FindPage from 'components/FindPrinter.tsx';
+import HomePage from 'screens/home';
 
 export const navigationRef = createRef<any>();
 
@@ -19,7 +19,7 @@ const App = () => {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
           name="Home"
-          component={HomeScreen}
+          component={HomePage}
           options={{
             headerTitle: 'Printer Demo',
           }}
@@ -29,7 +29,7 @@ const App = () => {
           options={{
             headerTitle: 'Find Printer',
           }}
-          component={FindPrinter}
+          component={FindPage}
         />
         <Stack.Screen
           name="Sunmi"
@@ -38,6 +38,20 @@ const App = () => {
           }}
           component={SunmiScreen}
         />
+        {/*<Stack.Screen*/}
+        {/*  name="Discovery"*/}
+        {/*  options={{*/}
+        {/*    headerTitle: 'Sunmi Printer',*/}
+        {/*  }}*/}
+        {/*  component={Discovery}*/}
+        {/*/>*/}
+        {/*<Stack.Screen*/}
+        {/*  name="SimplePrint"*/}
+        {/*  options={{*/}
+        {/*    headerTitle: 'Sunmi Printer',*/}
+        {/*  }}*/}
+        {/*  component={SimplePrint}*/}
+        {/*/>*/}
       </Stack.Navigator>
     </NavigationContainer>
   );

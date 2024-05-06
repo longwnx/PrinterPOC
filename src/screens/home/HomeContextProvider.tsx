@@ -35,12 +35,12 @@ const HomeContextProvider = ({children}: {children?: React.ReactNode}) => {
     usb: USBPrinter,
   };
   const [selectedValue, setSelectedValue] = useState<keyof typeof printerList>(
-    DevicesEnum.net,
+    DevicesEnum.blu,
   );
 
   const [selectedNetPrinter, setSelectedNetPrinter] = useState<DeviceType>({
     device_name: 'My Net Printer',
-    host: '192.168.0.101', // your host
+    host: '192.168.123.1', // your host
     port: PORT, // your port
     printerType: DevicesEnum.net,
   });
